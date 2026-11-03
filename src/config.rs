@@ -46,7 +46,7 @@ impl Config {
             match fs::read_to_string(&config_path) {
                 Ok(content) => match toml::from_str::<Config>(&content) {
                     Ok(mut config) => {
-                        config.path = config_path; 
+                        config.path = config_path;
                         Ok(config)
                     }
                     Err(e) => Err(e)?,
@@ -56,7 +56,7 @@ impl Config {
                         // Create a default Config with HashMap
                         let mut default_config: Config = Config::default();
                         // File path
-                        default_config.path = config_path.clone(); 
+                        default_config.path = config_path.clone();
                         // Create dir
                         fs::create_dir_all(config_dir)?;
                         // Convert to toml format

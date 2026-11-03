@@ -5,7 +5,6 @@ mod ssh;
 
 use clap::Parser;
 use cli::{Cli, Commands};
-use config::Tunnel;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

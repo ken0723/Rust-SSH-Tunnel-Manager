@@ -36,7 +36,6 @@ pub enum Commands {
     // and that allow typing 'rtun ls -a' to list out all tunnel,
     // include non-started
     Ls {},
-    
     // TODO:
     // Remove a tunnel
     // Rm {},

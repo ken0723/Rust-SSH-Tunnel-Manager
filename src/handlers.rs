@@ -115,11 +115,12 @@ pub fn add_tunnel(
 
 pub async fn start_tunnel(name: &str) -> Result<(), Box<dyn Error>> {
     match Config::get(name) {
-        Ok(tunnel) => match ssh::start_tunnel(tunnel).await {
-            Ok(_) => println!("✅ Successfully connected to tunnel: {}", name),
-            Err(e) => eprintln!("❌ Error connecting tunnel: {}", e),
-        },
-        Err(e) => eprintln!("❌ Error get tunnel: {}", e),
+        Ok(tunnel) => {
+            if let Err(e) = ssh::start_tunnel(tunnel).await {
+                eprintln!("❌ Error connecting tunnel: {e}");
+            }
+        }
+        Err(e) => eprintln!("❌ Error get tunnel: {e}"),
     }
     Ok(())
 }
