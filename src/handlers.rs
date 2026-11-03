@@ -21,6 +21,24 @@ pub fn add_tunnel(
             .with_validator(required!("Name cannot be empty!"))
             .prompt()?,
     };
+    let overwrite = if Config::load()?.tunnels.contains_key(&final_name) {
+        let confirmed = Confirm::new(&format!("Tunnel '{final_name}' already exists. Overwrite?"))
+            .with_default(false)
+            .with_parser(&|answer| match answer.trim().to_ascii_lowercase().as_str() {
+                "y" | "yes" => Ok(true),
+                "n" | "no" => Ok(false),
+                _ => Err(()),
+            })
+            .with_error_message("Enter y/n or yes/no")
+            .prompt()?;
+        if !confirmed {
+            println!("Tunnel '{final_name}' was not changed");
+            return Ok(());
+        }
+        true
+    } else {
+        false
+    };
 
     let final_local_port = match local_port {
         Some(val) => val.clone(),
@@ -102,13 +120,11 @@ pub fn add_tunnel(
 
     // println!("tunnel data: {:?}", data);
 
-    match Config::save(data) {
-        Ok(_) => {
-            println!("✅ Successfully added tunnel: {}", final_name);
-        }
-        Err(e) => {
-            eprintln!("❌ Error adding tunnel: {}", e);
-        }
+    Config::save(data, overwrite)?;
+    if overwrite {
+        println!("✅ Successfully updated tunnel: {final_name}");
+    } else {
+        println!("✅ Successfully added tunnel: {final_name}");
     }
     Ok(())
 }

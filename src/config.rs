@@ -87,8 +87,11 @@ impl Config {
     }
 
     // Save a new tunnel to config.toml
-    pub fn save(data: Tunnel) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn save(data: Tunnel, overwrite: bool) -> Result<(), Box<dyn std::error::Error>> {
         let mut read_config = Config::load()?;
+        if read_config.tunnels.contains_key(&data.name) && !overwrite {
+            return Err(format!("Tunnel '{}' already exists", data.name).into());
+        }
         read_config.tunnels.insert(data.name.clone(), data);
 
         fs::write(&read_config.path, toml::to_string(&read_config)?)?;
